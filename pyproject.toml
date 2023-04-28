@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "imagext"
+version = "0.1.0"
+description = ""
+authors = ["Seofale <dert.0.1@yandex.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.95.1"
+uvicorn = {extras = ["standard"], version = "^0.21.1"}
+pillow = "^9.5.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
