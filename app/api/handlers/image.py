@@ -4,7 +4,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import HTTPException
 from pydantic import ValidationError
 
-from app.api.schemas.image import ImageData
+from app.api.schemas.image import ImageData, ImageDataWithBackColor
 from app.painters.text_painter import TextPainter
 
 router = APIRouter()
@@ -23,26 +23,40 @@ def get_image_data(image_data: str = Form(...)):
 
 
 @router.post(
-    "/create-image/",
+    "/create-image-background/",
     responses={
         200: {
             "content": {"image/png": {}}
         },
     },
 )
-def create_text_image(
+def create_image_with_background(
     image_data: ImageData = Depends(get_image_data),
-    file: UploadFile = File(...),
+    image_background: UploadFile = File(...),
     text_painter: TextPainter = Depends(),
 ) -> Response:
-    if file:
-        content = file.file.read()
-        image = text_painter.create_image(
-            **image_data.dict(),
-            background=content,
-        )
-        return Response(
-            content=text_painter.get_image_bytes(image),
-            status_code=200,
-            media_type="image/png",
-        )
+    content = image_background.file.read()
+    image = text_painter.create_image(
+        **image_data.dict(),
+        background=content,
+    )
+    return Response(
+        content=text_painter.get_image_bytes(image),
+        status_code=200,
+        media_type="image/png",
+    )
+
+
+@router.post("/create-image/")
+def create_image(
+    image_data: ImageDataWithBackColor,
+    text_painter: TextPainter = Depends(),
+) -> Response:
+    image = text_painter.create_image(
+        **image_data.dict(),
+    )
+    return Response(
+        content=text_painter.get_image_bytes(image),
+        status_code=200,
+        media_type="image/png",
+    )

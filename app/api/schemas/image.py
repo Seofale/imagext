@@ -8,3 +8,7 @@ class ImageData(BaseModel):
     text_color: str
     width: int
     height: int
+
+
+class ImageDataWithBackColor(ImageData):
+    background: str
